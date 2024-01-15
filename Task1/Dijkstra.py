@@ -32,7 +32,7 @@ def Dijkstra(grid, start: Node, end: Node, n: int, m: int):
                 visited[neighbor[0]][neighbor[1]].p = f
                 visited[neighbor[0]][neighbor[1]].parent = current
 
-def trace_path(node):
+def trace_path(node, file):
     path = []
     cost = 1
     while node.parent != None:
@@ -41,6 +41,9 @@ def trace_path(node):
         node = node.parent
     path.append([node.x, node.y])
     path.reverse()
-    print(cost)
+    sourceFile = open(file, 'w')
+    print(len(path), file = sourceFile)
+
     for i in range(len(path)):
-        print('{0} {1}'.format(path[i][0], path[i][1]))
+        print('{0} {1}'.format(path[i][0], path[i][1]), file = sourceFile)
+    sourceFile.close()
