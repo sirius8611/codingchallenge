@@ -36,7 +36,7 @@ def a_star_algorithm(start, end, grid, n, m, eff):
     priority_queue = []
     distance_grid = [[999999] * m for _ in range(n)] 
     dirs = [[0, -1], [-1, 0], [0,1], [1, 0]]
-    trace = {}
+    trace = [[Node(1,1)] * m for _ in range(n)]
     node_check = [[False] * m for _ in range(n)]
     distance_grid[start.x][start.y] = 0
     start.step = 0
@@ -60,22 +60,32 @@ def a_star_algorithm(start, end, grid, n, m, eff):
                 f = h + g
                 next_node.step = step + 1
                 heapq.heappush(priority_queue, (f, next_node))
-                trace[next_node.step] = cur_node
-    
+                trace[next_node.x][next_node.y] = cur_node
     if not found:
+        return None
+    paths = []
+    current = end
+    while not Node.equal(current, start):
+        paths.append(current)
+        current = trace[current.x][current.y]
+    paths.append(start)
+    paths.reverse()
+    return paths
+    #trace function   
+def print_path(paths):
+    if not paths:
         print("There is no path")
-    print(len(trace.keys()))
-    for key in trace.keys():
-        print(trace[key].x, end=" ")
-        print(trace[key].y)
+        return
+    print(len(paths))
+    for path in paths:
+        print(path.x, end=" ")
+        print(path.y)
         
 
 
 def main():
     inFile = './sample_task2.inp'
-
-    outFile = 'sample/sample1.out'
-
+    # outFile = 'sample/sample1.out'
     f = open(inFile, 'r')
     line = f.readline()
     n, m, k = [int(x) for x in line.split()]
@@ -104,5 +114,5 @@ def main():
     start = Node(sx, sy)
     end = Node(ex, ey)
     # print_grid(grid)
-    a_star_algorithm(start, end, grid,n, m, k)
+    print_path(a_star_algorithm(start, end, grid,n, m, k))
 main()
