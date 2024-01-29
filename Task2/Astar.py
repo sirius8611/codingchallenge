@@ -18,10 +18,8 @@ def Astar(grid, start: Node, end: Node, j: int, coeff: int):
     # visited[end.x][end.y] = end
     frontier = PriorityQueue()
     frontier.push(start.p, start)
-    step = 0
     while not frontier.empty():
         current = frontier.pop()
-        step += 1
         if current.x == end.x and current.y == end.y:
             return current
         for neighbor in nneighbors(current, grid):
@@ -36,8 +34,12 @@ def Astar(grid, start: Node, end: Node, j: int, coeff: int):
             elif visited[neighbor[0]][neighbor[1]].p > f:
                 visited[neighbor[0]][neighbor[1]].p = f
                 visited[neighbor[0]][neighbor[1]].parent = current
+    return None
 
 def trace_path(node):
+    if node == None:
+        print("There's no path")
+        return
     path = []
     cost = 1
     while node.parent != None:
