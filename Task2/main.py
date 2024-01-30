@@ -1,7 +1,9 @@
 import os
 import numpy as np
-
+import sys
 import heapq
+import time
+startTimer = float(time.time())
 # grid
 # start
 # end
@@ -74,7 +76,7 @@ def a_star_algorithm(start, end, grid, n, m, eff):
     #trace function   
 def print_path(paths):
     if not paths:
-        print("There is no path")
+        print("0\n")
         return
     print(len(paths))
     for path in paths:
@@ -84,35 +86,60 @@ def print_path(paths):
 
 
 def main():
-    inFile = './sample_task2.inp'
-    # outFile = 'sample/sample1.out'
-    f = open(inFile, 'r')
-    line = f.readline()
-    n, m, k = [int(x) for x in line.split()]
-    listBlocks = []
-    grid = [[0] * m for _ in range(n)]
-    for ii in range(k):
-        line = f.readline()
-        xx, yy = [int(x) for x in line.split()]
-        grid[xx][yy] = 1
+    listInp = []
+    for dirname, _, filenames in os.walk('./sample/'):
+        for filename in filenames:
+            if filename[-3:]  == 'inp':
+                listInp.append(os.path.join(dirname, filename))
+    listInp = sorted(listInp)
 
-    lline = f.readline()
-    sx, sy, ex, ey = [int(x) for x in lline.split()]
-    grid[sx][sy] = 2
-    grid[ex][ey] = 2
-    k = int(f.readline())
-    for j in range(k):
+    for idx, filename in enumerate(listInp):
+        '''
+        this is read file template
+        '''
+        inFile = filename
+        counter = filename.split('.')[1].split('/')[-1]
+        counter = int(counter[6:])
+
+        f = open(inFile, 'r')
         line = f.readline()
-        x, y, w = [int(x) for x in line.split()]
-        grid[x][y] = w
-    llline = f.readline()
-    j, k = [int(x) for x in llline.split()]
-    for i in range(n):
-        for y in range(m):
-            if grid[i][y] == 0:
-                grid[i][y] = j  
-    start = Node(sx, sy)
-    end = Node(ex, ey)
-    # print_grid(grid)
-    print_path(a_star_algorithm(start, end, grid,n, m, k))
+        n, m, k = [int(x) for x in line.split()]
+        listBlocks = []
+        grid = [[0] * m for _ in range(n)]
+        for ii in range(k):
+            line = f.readline()
+            xx, yy = [int(x) for x in line.split()]
+            grid[xx][yy] = 1
+
+        lline = f.readline()
+        sx, sy, ex, ey = [int(x) for x in lline.split()]
+        grid[sx][sy] = 2
+        grid[ex][ey] = 2
+        k = int(f.readline())
+        for j in range(k):
+            line = f.readline()
+            x, y, w = [int(x) for x in line.split()]
+            grid[x][y] = w
+        llline = f.readline()
+        j, k = [int(x) for x in llline.split()]
+        for i in range(n):
+            for y in range(m):
+                if grid[i][y] == 0:
+                    grid[i][y] = j  
+        start = Node(sx, sy)
+        end = Node(ex, ey)
+        # print_grid(grid)
+        if not os.path.exists('./result'):
+            os.mkdir('./result')
+    
+        sys.stdout = open(f'./result/sample{counter}.out', 'w') 
+        print_path(a_star_algorithm(start, end, grid,n, m, k))
 main()
+endTimer = float(time.time())
+duration = (endTimer-startTimer) * 10**3
+print("The time of execution of above program is :", duration, "ms")
+
+sourceFile = open(f'./result/time.txt', 'w')
+print(duration, file = sourceFile)
+sourceFile.close()    
+
